@@ -34,7 +34,7 @@
     "check-balance": "node scripts/check-balance.js",
     "start-basic": "node scripts/start-basic-bot.js",
     "demo-aa": "node scripts/demo-account-abstraction.js",
-    "wait-for-eth": "node scripts/wait-for-eth.js",
+    "wait-for-core": "node scripts/wait-for-eth.js",
     "mint-tokens": "node scripts/mint-tokens.js",
     "check-admin": "node scripts/check-admin-wallet.js",
     "fund-signer": "node scripts/fund-signer.js",

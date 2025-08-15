@@ -224,20 +224,20 @@ class WebServer {
 
             let transferResult;
 
-            if (token === 'ETH') {
-                // ETH transfer
+            if (token === 'CORE') {
+                // tCORE transfer
                 const senderWallet = await this.accountAbstractionService.getUserWallet(userId);
-                
+
                 // Check balance
-                const ethBalance = await this.accountAbstractionService.getWalletBalance(senderWallet.signerAddress);
-                if (parseFloat(ethBalance) < amountNum) {
-                    return res.status(400).json({ 
-                        success: false, 
-                        error: `Insufficient ETH balance. You have ${ethBalance} ETH` 
+                const coreBalance = await this.accountAbstractionService.getWalletBalance(senderWallet.signerAddress);
+                if (parseFloat(coreBalance) < amountNum) {
+                    return res.status(400).json({
+                        success: false,
+                        error: `Insufficient tCORE balance. You have ${coreBalance} tCORE`
                     });
                 }
 
-                // Execute ETH transfer
+                // Execute tCORE transfer
                 const tx = await senderWallet.signer.sendTransaction({
                     to: toAddress,
                     value: ethers.parseEther(amount.toString())

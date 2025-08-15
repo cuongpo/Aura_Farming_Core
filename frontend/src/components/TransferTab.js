@@ -27,7 +27,7 @@ import axios from 'axios';
 
 const TransferTab = ({ user }) => {
   const [formData, setFormData] = useState({
-    token: 'ETH',
+    token: 'CORE',
     toAddress: '',
     amount: '',
     message: ''
@@ -36,7 +36,7 @@ const TransferTab = ({ user }) => {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const tokens = [
-    { value: 'ETH', label: 'Ethereum (ETH)', icon: 'Ξ', color: '#627EEA' },
+    { value: 'CORE', label: 'Core Token (tCORE)', icon: '⚡', color: '#FF6B35' },
     { value: 'USDT', label: 'Mock USDT (mUSDT)', icon: '₮', color: '#26A17B' },
     { value: 'AURA', label: 'Aura Token (AURA)', icon: '🪙', color: '#FFD700' }
   ];

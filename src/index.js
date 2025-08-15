@@ -28,7 +28,7 @@ import { createLeaderboardCommand } from './commands/leaderboard.js';
 import { createRankingCommand } from './commands/ranking.js';
 import { createWalletCommand, createFundWalletCommand, createBalanceCommand } from './commands/wallet.js';
 import { createTipCommand, createTipHistoryCommand } from './commands/tip.js';
-import { createTransferETHCommand, createTransferUSDTCommand } from './commands/transfer.js';
+import { createTransferCoreCommand, createTransferUSDTCommand } from './commands/transfer.js';
 import { createQuestCommand, createOpenChestCommand, createClaimAuraCommand, createQuestHistoryCommand } from './commands/quest.js';
 import WebServer from './webserver.js';
 
@@ -38,7 +38,7 @@ dotenv.config();
 // Validate required environment variables
 const requiredEnvVars = [
     'TELEGRAM_BOT_TOKEN',
-    'LISK_TESTNET_RPC_URL',
+    'CORE_TESTNET_RPC_URL',
     'DATABASE_PATH'
 ];
 
@@ -243,17 +243,17 @@ Add me to your group chat to start tracking activity and earning rewards! 🎉
 /leaderboard - View weekly top 10 users
 /ranking - Check your current rank
 /wallet - View wallet info and balance
-/transfer_eth &lt;wallet_address&gt; amount - Send ETH to wallet address
+/transfer_core &lt;wallet_address&gt; amount - Send tCORE to wallet address
 /transfer_usdt &lt;wallet_address&gt; amount - Send mUSDT to wallet address
 /help - Show this help message
 
 <b>Admin Commands:</b>
 /tip @username amount - Send USDT rewards
-/fund @username amount - Fund user with ETH
+/fund @username amount - Fund user with tCORE
 /balance @username - Check user balance
 
 <b>Transfer Examples:</b>
-/transfer_eth 0x1234...5678 0.01 - Send 0.01 ETH to wallet address
+/transfer_core 0x1234...5678 0.01 - Send 0.01 tCORE to wallet address
 /transfer_usdt 0xabcd...ef12 100 Thanks! - Send 100 mUSDT with message
 
 <b>How it works:</b>
@@ -306,8 +306,8 @@ If you encounter any issues, please contact the administrators.
         );
 
         // Transfer commands (for all users)
-        this.bot.command('transfer_eth',
-            createTransferETHCommand(this.walletService, this.accountAbstractionService, this.userModel, this.database)
+        this.bot.command('transfer_core',
+            createTransferCoreCommand(this.walletService, this.accountAbstractionService, this.userModel, this.database)
         );
 
         this.bot.command('transfer_usdt',

@@ -112,11 +112,11 @@ You are confirmed as an admin!
 • Name: ${ctx.from.first_name || 'N/A'}
 
 **Next Steps:**
-1. Get testnet ETH for wallet: 0x7784aE76DcCbf05A7D49A745D9F22E5C0f89dDd3
-2. Deploy smart contract: \`npm run deploy-hardhat\`
+1. Get testnet tCORE for wallet: 0x7784aE76DcCbf05A7D49A745D9F22E5C0f89dDd3
+2. Deploy smart contract: \`npm run deploy-all-core\`
 3. Start full bot: \`npm start\`
 
-🔗 Faucet: https://sepolia-faucet.lisk.com/
+🔗 Faucet: https://scan.test2.btcs.network/faucet
     `);
 });
 

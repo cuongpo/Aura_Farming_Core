@@ -196,15 +196,15 @@ export function createFundWalletCommand(walletService, userModel, adminUserIds) 
 
 👤 <b>Target User:</b> ${target}
 📍 <b>Wallet Address:</b> <code>${targetWallet.address}</code>
-💵 <b>Amount:</b> ${amount} ETH
+💵 <b>Amount:</b> ${amount} tCORE
 
 ⚠️ <b>Manual Action Required:</b>
-Please send ${amount} ETH to the above address using your admin wallet.
+Please send ${amount} tCORE to the above address using your admin wallet.
 
-🔗 <b>Lisk Testnet Faucet:</b>
-Get test ETH at: https://sepolia-faucet.lisk.com/
+🔗 <b>Core Testnet Faucet:</b>
+Get test tCORE at: https://scan.test2.btcs.network/faucet
 
-💡 <b>Note:</b> Users need ETH for transaction fees when receiving tips.
+💡 <b>Note:</b> Users need tCORE for transaction fees when receiving tips.
             `);
             
         } catch (error) {
@@ -268,10 +268,10 @@ export function createBalanceCommand(walletService, userModel, adminUserIds) {
 📍 <b>Address:</b> <code>${walletInfo.address}</code>
 
 💰 <b>Balances:</b>
-⚡ ETH: ${formatBalance(ethBalance, 'ETH')}
+⚡ tCORE: ${formatBalance(ethBalance, 'tCORE')}
 🪙 mUSDT: ${formatBalance(tokenBalance, 'mUSDT')}
 
-🔗 <b>Explorer:</b> https://sepolia-blockscout.lisk.com/address/${walletInfo.address}
+🔗 <b>Explorer:</b> https://scan.test2.btcs.network/address/${walletInfo.address}
             `);
             
         } catch (error) {

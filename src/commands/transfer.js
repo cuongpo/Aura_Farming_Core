@@ -100,19 +100,19 @@ async function updateTransferStatus(database, transactionId, status, txHash = nu
 }
 
 /**
- * Handle ETH transfer command
+ * Handle tCORE transfer command
  * @param {Object} walletService - WalletService instance (fallback)
  * @param {Object} accountAbstractionService - AccountAbstractionService instance
  * @param {Object} userModel - UserModel instance
  * @param {Object} database - Database instance
  */
-export function createTransferETHCommand(walletService, accountAbstractionService, userModel, database) {
+export function createTransferCoreCommand(walletService, accountAbstractionService, userModel, database) {
     return async (ctx) => {
         try {
             const senderId = ctx.from.id.toString();
-            
+
             // Parse command arguments
-            const parsed = parseTransferArguments(ctx.message.text, 'ETH');
+            const parsed = parseTransferArguments(ctx.message.text, 'tCORE');
             if (parsed.error) {
                 return await ctx.reply(`❌ ${parsed.error}`);
             }
