@@ -1,0 +1,87 @@
+{
+  "name": "aura-farming-telegram-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot with account abstraction wallets and USDT rewards on Core testnet",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "start:web": "node src/web-only.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest",
+    "deploy-contract": "node scripts/deploy-usdt.js",
+    "compile": "npx hardhat compile",
+    "deploy-hardhat": "npx hardhat run scripts/deploy-hardhat.js --network coreTestnet",
+    "deploy-local": "npx hardhat run scripts/deploy-hardhat.js --network hardhat",
+    "deploy-aa": "npx hardhat run scripts/deploy-account-abstraction.js --network coreTestnet",
+    "deploy-aura": "npx hardhat run scripts/deploy-aura.js --network coreTestnet",
+    "deploy-simple-aura": "npx hardhat run scripts/deploy-simple-aura.js --network coreTestnet",
+    "deploy-aura-fast": "npx hardhat run scripts/deploy-aura-fast.js --network coreTestnet",
+    "check-deployment": "npx hardhat run scripts/check-deployment.js --network coreTestnet",
+    "check-all-deployments": "npx hardhat run scripts/check-all-deployments.js --network coreTestnet",
+    "deploy-minimal-aura": "npx hardhat run scripts/deploy-minimal-aura.js --network coreTestnet",
+    "deploy-aura-simple": "npx hardhat run scripts/deploy-aura-simple.js --network coreTestnet",
+    "deploy-aura-core": "npx hardhat run scripts/deploy-aura-core.js --network coreTestnet",
+    "deploy-usdt-core": "npx hardhat run scripts/deploy-usdt-core.js --network coreTestnet",
+    "deploy-all-core": "npx hardhat run scripts/deploy-all-core.js --network coreTestnet",
+    "deploy-aa-core": "npx hardhat run scripts/deploy-aa-core.js --network coreTestnet",
+    "setup-frontend": "cd frontend && npm install",
+    "build-frontend": "cd frontend && npm run build",
+    "dev-frontend": "cd frontend && npm start",
+    "build": "npm run setup-frontend && npm run build-frontend",
+    "get-user-id": "node scripts/get-user-id.js",
+    "setup-wallet": "node scripts/setup-wallet.js",
+    "check-balance": "node scripts/check-balance.js",
+    "start-basic": "node scripts/start-basic-bot.js",
+    "demo-aa": "node scripts/demo-account-abstraction.js",
+    "wait-for-eth": "node scripts/wait-for-eth.js",
+    "mint-tokens": "node scripts/mint-tokens.js",
+    "check-admin": "node scripts/check-admin-wallet.js",
+    "fund-signer": "node scripts/fund-signer.js",
+    "debug-wallets": "node scripts/debug-wallets.js",
+    "fund-users": "node scripts/fund-users.js",
+    "show-addresses": "node scripts/show-addresses.js",
+    "migrate-db": "node scripts/migrate-database.js",
+    "test-functionality": "node scripts/test-functionality.js",
+    "security-check": "node scripts/security-check.js"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "blockchain",
+    "account-abstraction",
+    "lisk",
+    "usdt"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@account-abstraction/contracts": "^0.6.0",
+    "@account-abstraction/sdk": "^0.6.0",
+    "@openzeppelin/contracts": "^4.9.6",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.8.1",
+    "express": "^5.1.0",
+    "node-cron": "^3.0.3",
+    "sqlite3": "^5.1.6",
+    "telegraf": "^4.15.6"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "@types/node": "^20.8.0",
+    "hardhat": "^2.26.3",
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {},
+    "extensionsToTreatAsEsm": [
+      ".js"
+    ],
+    "globals": {
+      "NODE_OPTIONS": "--experimental-vm-modules"
+    }
+  }
+}

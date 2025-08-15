@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Farming Wallet</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--tg-theme-text-color, #000000);
+        }
+
+        .header p {
+            color: var(--tg-theme-hint-color, #999999);
+            font-size: 14px;
+        }
+
+        .wallet-card {
+            background: var(--tg-theme-secondary-bg-color, #f8f9fa);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--tg-theme-section-separator-color, #e5e5e5);
+        }
+
+        .wallet-address {
+            margin-bottom: 20px;
+        }
+
+        .wallet-address h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: var(--tg-theme-text-color, #000000);
+        }
+
+        .address-display {
+            background: var(--tg-theme-bg-color, #ffffff);
+            border: 1px solid var(--tg-theme-section-separator-color, #e5e5e5);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--tg-theme-button-color, #007AFF);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .balance-section {
+            margin-bottom: 20px;
+        }
+
+        .balance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--tg-theme-section-separator-color, #e5e5e5);
+        }
+
+        .balance-item:last-child {
+            border-bottom: none;
+        }
+
+        .balance-label {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .balance-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .eth-icon {
+            background: #627EEA;
+            color: white;
+        }
+
+        .usdt-icon {
+            background: #26A17B;
+            color: white;
+        }
+
+        .balance-value {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .transfer-section {
+            margin-top: 30px;
+        }
+
+        .transfer-form {
+            background: var(--tg-theme-secondary-bg-color, #f8f9fa);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--tg-theme-section-separator-color, #e5e5e5);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--tg-theme-section-separator-color, #e5e5e5);
+            border-radius: 8px;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            font-size: 16px;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--tg-theme-button-color, #007AFF);
+        }
+
+        .transfer-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--tg-theme-button-color, #007AFF);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .transfer-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 2px solid var(--tg-theme-section-separator-color, #e5e5e5);
+            border-top: 2px solid var(--tg-theme-button-color, #007AFF);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ff4757;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .success {
+            background: #2ed573;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .user-info {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--tg-theme-secondary-bg-color, #f8f9fa);
+            border-radius: 12px;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--tg-theme-button-color, #007AFF);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 auto 12px;
+        }
+
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .user-handle {
+            color: var(--tg-theme-hint-color, #999999);
+            font-size: 14px;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            background: var(--tg-theme-secondary-bg-color, #f8f9fa);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+            border: 1px solid var(--tg-theme-section-separator-color, #e5e5e5);
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--tg-theme-hint-color, #999999);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-button.active {
+            background: var(--tg-theme-button-color, #007AFF);
+            color: var(--tg-theme-button-text-color, white);
+        }
+
+        .tab-content {
+            display: none !important;
+        }
+
+        .tab-content.active {
+            display: block !important;
+        }
+
+        /* Quest Styles */
+        .quest-card {
+            background: var(--tg-theme-bg-color, white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--tg-theme-section-separator-color, #e5e5e5);
+        }
+
+        .quest-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .quest-icon {
+            font-size: 24px;
+            margin-right: 12px;
+        }
+
+        .quest-info h3 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .quest-info p {
+            margin: 0;
+            color: var(--tg-theme-hint-color, #999999);
+            font-size: 14px;
+        }
+
+        .quest-reward {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .chest-section {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .chest-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .chest-button {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .chest-button:hover {
+            transform: scale(1.05);
+        }
+
+        .chest-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quest-history {
+            margin-top: 20px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--tg-theme-section-separator-color, #e5e5e5);
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .aura-icon {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- User Info -->
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">👤</div>
+            <div class="user-name" id="userName">Loading...</div>
+            <div class="user-handle" id="userHandle">@loading</div>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>🌟 Aura Wallet</h1>
+            <p>Manage your crypto assets</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('wallet')">💼 Wallet</button>
+            <button class="tab-button" onclick="showTab('transfer')">💸 Transfer</button>
+            <button class="tab-button" onclick="showTab('quest')">🎮 Quest</button>
+        </div>
+
+        <!-- Wallet Tab Content -->
+        <div id="wallet-tab" class="tab-content active">
+            <!-- Wallet Card -->
+            <div class="wallet-card">
+            <div class="wallet-address">
+                <h3>📍 Wallet Address</h3>
+                <div class="address-display">
+                    <span id="walletAddress">Loading...</span>
+                    <button class="copy-btn" onclick="copyAddress()">Copy</button>
+                </div>
+            </div>
+
+            <div class="balance-section">
+                <h3 style="margin-bottom: 16px;">💰 Balances</h3>
+                <div class="balance-item">
+                    <div class="balance-label">
+                        <div class="balance-icon eth-icon">Ξ</div>
+                        <span>Ethereum</span>
+                    </div>
+                    <div class="balance-value" id="ethBalance">0.000 ETH</div>
+                </div>
+                <div class="balance-item">
+                    <div class="balance-label">
+                        <div class="balance-icon usdt-icon">₮</div>
+                        <span>Mock USDT</span>
+                    </div>
+                    <div class="balance-value" id="usdtBalance">0.000 mUSDT</div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Transfer Tab Content -->
+        <div id="transfer-tab" class="tab-content">
+            <!-- Transfer Section -->
+            <div class="transfer-section">
+            <div class="transfer-form">
+                <h3 style="margin-bottom: 20px;">💸 Send Crypto</h3>
+                
+                <div class="form-group">
+                    <label class="form-label">Token</label>
+                    <select class="form-select" id="tokenSelect">
+                        <option value="ETH">Ethereum (ETH)</option>
+                        <option value="USDT">Mock USDT (mUSDT)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">To Address</label>
+                    <input type="text" class="form-input" id="toAddress" placeholder="0x..." />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Amount</label>
+                    <input type="number" class="form-input" id="amount" placeholder="0.0" step="any" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Message (Optional)</label>
+                    <input type="text" class="form-input" id="message" placeholder="Enter a message..." />
+                </div>
+
+                <div class="error" id="errorMessage"></div>
+                <div class="success" id="successMessage"></div>
+
+                <button class="transfer-btn" id="transferBtn" onclick="sendTransfer()">
+                    Send Transfer
+                </button>
+
+                <div class="loading" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <div>Processing transfer...</div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Quest Tab Content -->
+        <div id="quest-tab" class="tab-content">
+            <!-- Daily Quest Status -->
+            <div class="quest-card">
+                <div class="quest-status">
+                    <div style="display: flex; align-items: center;">
+                        <span class="quest-icon">🎯</span>
+                        <div class="quest-info">
+                            <h3>Daily Quest</h3>
+                            <p id="questDescription">Send at least 1 message in group chat</p>
+                        </div>
+                    </div>
+                    <div class="quest-reward" id="questStatus">Not Started</div>
+                </div>
+                <div style="text-align: center; color: var(--tg-theme-hint-color, #999999);">
+                    <p id="questProgress">Messages today: 0</p>
+                </div>
+            </div>
+
+            <!-- Daily Chest -->
+            <div class="quest-card">
+                <div class="chest-section">
+                    <span class="chest-icon" id="chestIcon">🔒</span>
+                    <h3 id="chestTitle">Daily Chest</h3>
+                    <p id="chestDescription">Complete daily quest to unlock</p>
+                    <button class="chest-button" id="chestButton" onclick="openChest()" disabled>
+                        Open Chest
+                    </button>
+                </div>
+            </div>
+
+            <!-- AURA Balance -->
+            <div class="quest-card">
+                <div class="balance-item">
+                    <div class="balance-label">
+                        <div class="balance-icon aura-icon">🪙</div>
+                        <span>AURA Tokens</span>
+                    </div>
+                    <div class="balance-value" id="auraBalance">0.000 AURA</div>
+                </div>
+                <button class="transfer-btn" id="claimButton" onclick="claimAura()" style="margin-top: 16px; display: none;">
+                    Claim AURA Rewards
+                </button>
+            </div>
+
+            <!-- Quest History -->
+            <div class="quest-card">
+                <h3 style="margin-bottom: 16px;">📊 Quest History</h3>
+                <div class="quest-history" id="questHistory">
+                    <div style="text-align: center; color: var(--tg-theme-hint-color, #999999); padding: 20px;">
+                        Loading quest history...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
