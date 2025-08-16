@@ -76,7 +76,7 @@ const TransferTab = ({ user }) => {
         showSnackbar('Transfer completed successfully!', 'success');
         // Reset form
         setFormData({
-          token: 'ETH',
+          token: 'CORE',
           toAddress: '',
           amount: '',
           message: ''

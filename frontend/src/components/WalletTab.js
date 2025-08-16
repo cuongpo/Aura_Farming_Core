@@ -70,12 +70,12 @@ const WalletTab = ({ user }) => {
 
   const balanceCards = [
     {
-      symbol: 'ETH',
-      name: 'Ethereum',
+      symbol: 'tCORE',
+      name: 'Core Token',
       balance: walletData?.balances?.eth || '0',
-      icon: 'Ξ',
-      color: '#627EEA',
-      gradient: 'linear-gradient(135deg, #627EEA, #4A90E2)'
+      icon: '⚡',
+      color: '#FF6B35',
+      gradient: 'linear-gradient(135deg, #FF6B35, #F7931E)'
     },
     {
       symbol: 'mUSDT',
