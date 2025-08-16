@@ -72,7 +72,7 @@ const WalletTab = ({ user }) => {
     {
       symbol: 'tCORE',
       name: 'Core Token',
-      balance: walletData?.balances?.eth || '0',
+      balance: walletData?.balances?.core || '0',
       icon: '⚡',
       color: '#FF6B35',
       gradient: 'linear-gradient(135deg, #FF6B35, #F7931E)'

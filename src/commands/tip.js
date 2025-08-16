@@ -106,17 +106,13 @@ async function updateTransactionStatus(database, transactionId, status, txHash =
  * @param {Object} accountAbstractionService - AccountAbstractionService instance
  * @param {Object} userModel - UserModel instance
  * @param {Object} database - Database instance
- * @param {Array} adminUserIds - Array of admin user IDs
  */
-export function createTipCommand(walletService, accountAbstractionService, userModel, database, adminUserIds) {
+export function createTipCommand(walletService, accountAbstractionService, userModel, database) {
     return async (ctx) => {
         try {
-            const adminId = ctx.from.id.toString();
-            
-            // Check if requester is admin
-            if (!adminUserIds.includes(adminId)) {
-                return await ctx.reply('❌ This command is only available to administrators.');
-            }
+            const senderId = ctx.from.id.toString();
+
+            // All users can tip each other - no admin check needed
 
             // Parse command arguments
             const parsed = parseTipArguments(ctx.message.text);
@@ -140,19 +136,19 @@ export function createTipCommand(walletService, accountAbstractionService, userM
             }
 
             // Check if trying to tip themselves
-            if (targetUser.telegram_user_id === adminId) {
+            if (targetUser.telegram_user_id === senderId) {
                 return await ctx.reply('❌ You cannot tip yourself!');
             }
 
             // Use Account Abstraction service if available, otherwise fallback
             const service = accountAbstractionService || walletService;
 
-            // Get admin and target wallets
-            const adminWallet = await service.getUserWallet(adminId);
+            // Get sender and target wallets
+            const senderWallet = await service.getUserWallet(senderId);
             const targetWallet = await service.getUserWallet(targetUser.telegram_user_id);
 
             // Update wallet addresses in database
-            await userModel.updateUserWallet(adminId, adminWallet.address);
+            await userModel.updateUserWallet(senderId, senderWallet.address);
             await userModel.updateUserWallet(targetUser.telegram_user_id, targetWallet.address);
 
             // Check if USDT contract is configured
@@ -166,19 +162,29 @@ export function createTipCommand(walletService, accountAbstractionService, userM
                 chatGroupId = ctx.chatGroup.id;
             }
 
-            // Get admin user record
-            const adminUser = await userModel.getUserByTelegramId(adminId);
+            // Get sender user record
+            const senderUser = await userModel.getUserByTelegramId(senderId);
+
+            // Check sender's USDT balance
+            const senderBalance = await service.getWalletBalance(
+                senderWallet.address,
+                process.env.USDT_CONTRACT_ADDRESS
+            );
+
+            if (parseFloat(senderBalance) < amount) {
+                return await ctx.reply(`❌ Insufficient balance! You have ${senderBalance} mUSDT but trying to tip ${amount} mUSDT.`);
+            }
 
             // Create transaction record
             const transactionId = await createTransactionRecord(database, {
-                fromUserId: adminUser.id,
+                fromUserId: senderUser.id,
                 toUserId: targetUser.id,
-                fromAddress: adminWallet.address,
+                fromAddress: senderWallet.address,
                 toAddress: targetWallet.address,
                 amount: amount,
-                tokenAddress: process.env.MOCK_USDT_CONTRACT_ADDRESS,
+                tokenAddress: process.env.USDT_CONTRACT_ADDRESS,
                 chatGroupId: chatGroupId,
-                adminUserId: adminUser.id
+                adminUserId: senderUser.id
             });
 
             // Send initial confirmation
@@ -196,28 +202,9 @@ ${message ? `💬 <b>Message:</b> ${message}` : ''}
             const statusMessage = await ctx.replyWithHTML(initialMessage);
 
             try {
-                // Check admin's token balance (use signer address for actual balance)
-                const balanceAddress = adminWallet.signerAddress || adminWallet.address;
-                const adminBalance = await service.getWalletBalance(
-                    balanceAddress,
-                    process.env.MOCK_USDT_CONTRACT_ADDRESS
-                );
-
-                if (parseFloat(adminBalance) < amount) {
-                    await updateTransactionStatus(database, transactionId, 'failed');
-                    
-                    return await ctx.telegram.editMessageText(
-                        ctx.chat.id,
-                        statusMessage.message_id,
-                        null,
-                        `❌ <b>Tip Failed</b>\n\nInsufficient mUSDT balance. Admin has ${adminBalance} mUSDT but tried to send ${amount} mUSDT.`,
-                        { parse_mode: 'HTML' }
-                    );
-                }
-
-                // Execute the transfer
+                // Execute the transfer (balance already checked above)
                 const transferResult = await service.transferTokens(
-                    adminId,
+                    senderId,
                     targetUser.telegram_user_id,
                     amount.toString(),
                     process.env.USDT_CONTRACT_ADDRESS

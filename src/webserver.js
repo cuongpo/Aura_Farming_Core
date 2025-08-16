@@ -140,7 +140,7 @@ class WebServer {
             const walletInfo = await this.accountAbstractionService.getUserWallet(userId);
             
             // Get balances (use same address as Telegram command)
-            const ethBalance = await this.accountAbstractionService.getWalletBalance(walletInfo.address);
+            const coreBalance = await this.accountAbstractionService.getWalletBalance(walletInfo.address);
             const usdtBalance = await this.accountAbstractionService.getWalletBalance(
                 walletInfo.address,
                 process.env.USDT_CONTRACT_ADDRESS
@@ -159,7 +159,7 @@ class WebServer {
                 success: true,
                 address: walletInfo.address,
                 balances: {
-                    eth: parseFloat(ethBalance).toFixed(6),
+                    core: parseFloat(coreBalance).toFixed(6),
                     usdt: parseFloat(usdtBalance).toFixed(3),
                     aura: '0.000' // Will be updated when AURA service is integrated
                 },

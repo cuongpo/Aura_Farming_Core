@@ -245,10 +245,10 @@ Add me to your group chat to start tracking activity and earning rewards! 🎉
 /wallet - View wallet info and balance
 /transfer_core &lt;wallet_address&gt; amount - Send tCORE to wallet address
 /transfer_usdt &lt;wallet_address&gt; amount - Send mUSDT to wallet address
+/tip @username amount - Send USDT to another user
 /help - Show this help message
 
 <b>Admin Commands:</b>
-/tip @username amount - Send USDT rewards
 /fund @username amount - Fund user with tCORE
 /balance @username - Check user balance
 
@@ -260,7 +260,7 @@ Add me to your group chat to start tracking activity and earning rewards! 🎉
 • Send messages in group chats to earn activity points
 • Weekly leaderboard resets every Monday
 • Transfer ETH/USDT to any wallet address directly
-• Admins can reward active users with tip commands
+• Users can tip each other with USDT tokens
 • Each user gets a unique wallet address automatically
 
 <b>Support:</b>
@@ -284,10 +284,9 @@ If you encounter any issues, please contact the administrators.
             createWalletCommand(this.walletService, this.accountAbstractionService, this.userModel)
         );
 
-        // Tip command (admin only)
+        // Tip command (all users can tip each other)
         this.bot.command('tip',
-            requireAdmin(this.adminUserIds),
-            createTipCommand(this.walletService, this.accountAbstractionService, this.userModel, this.database, this.adminUserIds)
+            createTipCommand(this.walletService, this.accountAbstractionService, this.userModel, this.database)
         );
 
         // Additional admin commands
